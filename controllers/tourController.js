@@ -80,7 +80,7 @@ const createTour = async (req, res) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      message: err.message,
+      message: err,
     });
   }
 };
@@ -104,13 +104,6 @@ const updateTour = async (req, res) => {
       message: error.message,
     });
   }
-
-  // res.status(200).json({
-  //   status: 'success',
-  //   data: {
-  //     tour: '<Updated tour here...>',
-  //   },
-  // });
 };
 
 const deleteTour = async (req, res) => {
@@ -127,11 +120,6 @@ const deleteTour = async (req, res) => {
       message: error.message,
     });
   }
-
-  // res.status(204).json({
-  //   status: 'success',
-  //   data: null,
-  // });
 };
 
 module.exports = {
