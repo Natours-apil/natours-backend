@@ -11,7 +11,7 @@ const DB = process.env.DATABASE.replace(
 mongoose
   .connect(DB)
   .then((con) => {
-    console.log(con.connections);
+    // console.log(con.connections);
     console.log('DB connection successful!');
   })
   .catch((err) => {
@@ -19,8 +19,6 @@ mongoose
   });
 
 const app = require('./app');
-
-// console.log(process.env);
 
 const port = process.env.PORT || 3000;
 

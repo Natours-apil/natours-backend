@@ -1,69 +1,76 @@
-const fs = require('fs');
+// const fs = require('fs');
+const Tour = require('../models/tourModel');
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
-);
+// locally importing data for testing purposes
+// const tours = JSON.parse(
+//   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
+// );
 
-const checkID = (req, res, next, val) => {
-  console.log(`Tour id is: ${val}`);
-  if (req.params.id * 1 > tours.length) {
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
-  next();
-};
+// const checkID = (req, res, next, val) => {
+//   console.log(`Tour id is: ${val}`);
+//   if (req.params.id * 1 > tours.length) {
+//     return res.status(404).json({
+//       status: 'fail',
+//       message: 'Invalid ID',
+//     });
+//   }
+//   next();
+// };
 
-const checkBody = (req, res, next) => {
-  if (!req.body.name || !req.body.price) {
-    return res.status(400).json({
-      status: 'fail',
-      message: 'Name and Price must be included.',
-    });
-  }
-  next();
-};
+// const checkBody = (req, res, next) => {
+//   if (!req.body.name || !req.body.price) {
+//     return res.status(400).json({
+//       status: 'fail',
+//       message: 'Name and Price must be included.',
+//     });
+//   }
+//   next();
+// };
 
 const getAllTours = (req, res) => {
   console.log(req.requestTime);
   res.status(200).json({
     status: 'success',
     requestedAt: req.requestTime,
-    results: tours.length,
-    data: {
-      tours,
-    },
+    // results: tours.length,
+    // data: {
+    //   tours,
+    // },
   });
 };
 
 const getTour = (req, res) => {
   console.log(req.params);
-  const tour = tours.find((el) => el.id === +req.params.id);
+  // const tour = tours.find((el) => el.id === +req.params.id);
 
-  res.status(200).json({
-    status: 'success',
-    // results: tours.length,   // Not needed for a single tour
-    data: {
-      tour,
-    },
-  });
+  // res.status(200).json({
+  //   status: 'success',
+  //   // results: tours.length,   // Not needed for a single tour
+  //   data: {
+  //     tour,
+  //   },
+  // });
 };
 
-const createTour = (req, res) => {
-  //   console.log(req.body);
-  const newId = tours[tours.length - 1].id + 1;
-  const newTour = Object.assign({ id: newId }, req.body);
+const createTour = async (req, res) => {
+  try {
+    // const newTour = new Tour({});
+    // newTour.save();
 
-  tours.push(newTour);
-  fs.writeFile(tours, JSON.stringify(tours), (err) => {
+    const newTour = await Tour.create(req.body);
+
     res.status(201).json({
       status: 'success',
       data: {
         tour: newTour,
       },
     });
-  });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.message,
+    });
+  }
 };
 
 const updateTour = (req, res) => {
@@ -88,6 +95,6 @@ module.exports = {
   createTour,
   updateTour,
   deleteTour,
-  checkID,
-  checkBody,
+  // checkID,
+  // checkBody,
 };
