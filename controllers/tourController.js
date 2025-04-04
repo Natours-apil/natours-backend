@@ -43,8 +43,8 @@ const getAllTours = async (req, res) => {
     // {difficulty: 'easy', duration: { $gte: 5}}
     // {difficulty: 'easy', duration: { gte: '5'}
 
-    console.log(queryObj);
-    console.log(JSON.parse(queryStr));
+    // console.log(queryObj);
+    // console.log(JSON.parse(queryStr));
 
     // const query = await Tour.find()
     //   .where('duration')
@@ -63,7 +63,7 @@ const getAllTours = async (req, res) => {
       query = query.sort('-createdAt');
     }
 
-    console.log(query);
+    // console.log(query);
 
     // 3) FIELD LIMITING
     if (req.query.fields) {
@@ -71,6 +71,21 @@ const getAllTours = async (req, res) => {
       query = query.select(fields);
     } else {
       query = query.select('-__v');
+    }
+
+    // 4) PAGINATION
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 100;
+    const skip = (page - 1) * limit; // page=1&limit=10 => 0 , page=2&limit=10 => 10
+
+    // page=2&limit=10
+    query = query.skip(skip).limit(limit);
+
+    if (req.query.page) {
+      const numTours = await Tour.countDocuments();
+      if (skip >= numTours) {
+        throw new Error('This page does not exist');
+      }
     }
 
     // EXECUTING QUERY

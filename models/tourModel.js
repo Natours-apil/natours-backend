@@ -55,7 +55,7 @@ const tourSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now(),
-    select: false,
+    select: false, // aile maile data import garda same created date vayera narakheko
   },
   startDates: [Date],
 });
