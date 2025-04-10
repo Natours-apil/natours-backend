@@ -1,5 +1,5 @@
 // const fs = require('fs');
-const Tour = require('../models/tourModel');
+const Tour = require('../models/tourModel').default;
 const APIFeatures = require('../utils/apiFeatures');
 
 const aliasTopTours = (req, res, next) => {
@@ -117,7 +117,12 @@ const getTourStats = async (req, res) => {
   try {
     const stats = await Tour.aggregate([
       {
-        $match: { ratingsAverage: { $gte: 4.5 } },
+        $match: {
+          ratingsAverage: { $gte: 4.5 },
+
+          //NOT PREFERRED BECOZ WE HAVE TO DO IT ON ALL AGGREGATE FUNCTION
+          // secretTour: { $ne: true }
+        },
       },
       {
         $group: {
