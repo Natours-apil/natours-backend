@@ -1,4 +1,11 @@
-const sendErrorDev = (err, req, res) => {
+const AppError = require('./../utils/appError');
+
+const handleCastErrorDB = (err) => {
+  const message = `Invalid ${err.path}: ${err.value}.`;
+  return new AppError(message, 400);
+};
+
+const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
@@ -7,17 +14,17 @@ const sendErrorDev = (err, req, res) => {
   });
 };
 
-const sendErrorProd = (err, req, res) => {
+const sendErrorProd = (err, res) => {
   if (err.isOperational) {
     // Operational, trusted error: send message to client
-    return res.status(err.statusCode).json({
+    res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
   } else {
     // Programming or other unknown error: don't leak error details
     console.error('ERROR 💥', err);
-    return res.status(500).json({
+    res.status(500).json({
       status: 'error',
       message: 'Something went very wrong!',
     });
@@ -25,14 +32,27 @@ const sendErrorProd = (err, req, res) => {
 };
 
 module.exports = (err, req, res, next) => {
-  console.log(err.stack);
+  console.log('NODE_ENV:', process.env.NODE_ENV); // Debug log
 
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
+  const environment = (process.env.NODE_ENV || '').trim().toLowerCase();
+  console.log('Normalized NODE_ENV:', environment); // Debug log
+  // console.log(err.stack);
 
-  if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, req, res);
-  } else if (process.env.NODE_ENV === 'production') {
-    sendErrorProd(err, req, res);
+  // err.statusCode = err.statusCode || 500;
+  // err.status = err.status || 'error';
+
+  if (environment === 'development') {
+    sendErrorDev(err, res);
+  } else if (environment === 'production') {
+    console.log('error in production hit');
+
+    let error = { ...err };
+
+    error.message = err.message;
+    error.name = err.name;
+
+    if (error.name === 'CastError') error = handleCastErrorDB(error);
+
+    sendErrorProd(error, res);
   }
 };
