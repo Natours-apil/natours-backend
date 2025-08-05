@@ -27,6 +27,7 @@ const userSchema = new Schema({
     type: String,
     required: [true, 'A user must have a password'],
     minlength: [8, 'Password must be at least 8 characters long'],
+    select: false, // Do not return password in queries
   },
   passwordConfirm: {
     type: String,
@@ -50,6 +51,13 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined; // Remove passwordConfirm field after hashing
   next();
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = model('User', userSchema);
 module.exports = User;
