@@ -40,6 +40,9 @@ const userSchema = new Schema({
       message: 'Passwords do not match',
     },
   },
+  passwordChangedAt: {
+    type: Date,
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -57,6 +60,18 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = this.passwordChangedAt.getTime() / 1000;
+
+    // True means changed
+    // If passwordChangedAt is after the JWT issued time, then password has changed
+    return JWTTimestamp < changedTimestamp;
+  }
+  // False means NOT changed
+  return false;
 };
 
 const User = model('User', userSchema);
