@@ -33,6 +33,12 @@ app.use((req, res, next) => {
 // 2) ROUTE HANDLERS
 
 // 3) ROUTES
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Welcome to the Natours API!',
+  });
+});
 
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
