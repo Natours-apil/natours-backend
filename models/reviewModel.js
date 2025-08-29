@@ -40,13 +40,21 @@ const reviewSchema = new mongoose.Schema(
 // reviewSchema.pre(/^find/, function (next) {
 //   this.populate({
 //     path: 'tour',
-//     select: '-__v ',
+//     select: 'name',
 //   }).populate({
 //     path: 'user',
-//     select: '-__v -passwordChangedAt',
+//     select: 'name photo',
 //   });
 //   next();
 // });
+
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name photo',
+  });
+  next();
+});
 
 const review = mongoose.model('Review', reviewSchema);
 module.exports = review;

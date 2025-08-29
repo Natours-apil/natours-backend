@@ -78,7 +78,7 @@ const tourSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now(),
-      select: false, // aile maile data import garda same created date vayera narakheko
+      select: false,
     },
     startDates: [Date],
     secretTour: {
@@ -125,6 +125,14 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+// virtual populate / way of referencing tourmodel with review model /
+// field in reviewModel "tour" is foreign key and  localField is "_id"
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 //  DOCUMENT MIDDLEWARE: runs before .save() and .create()
