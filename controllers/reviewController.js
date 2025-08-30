@@ -23,14 +23,20 @@ const getAllReviews = catchAsync(async (req, res, next) => {
 });
 
 const createReview = catchAsync(async (req, res, next) => {
-  const existingReview = await Review.findOne({
-    tour: req.body.tour,
-    user: req.user.id,
-  });
+  //This is my implementation of a user only being able to review a tour once
 
-  if (existingReview) {
-    return next(new AppError('You have already reviewed this tour', 400));
-  }
+  // const existingReview = await Review.findOne({
+  //   tour: req.body.tour,
+  //   user: req.user.id,
+  // });
+
+  // if (existingReview) {
+  //   return next(new AppError('You have already reviewed this tour', 400));
+  // }
+
+  //Allow nested routes
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
 
   const newReview = await Review.create(req.body);
   res.status(201).json({
