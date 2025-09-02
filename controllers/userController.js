@@ -1,11 +1,7 @@
-// const fs = require('fs');
 const catchAsync = require('../utils/catchAsync');
 const User = require('../models/userModel');
 const AppError = require('../utils/appError');
 const factory = require('./handleFactory');
-
-// const Tour = require('../models/tourModel').default;
-// const APIFeatures = require('../utils/apiFeatures');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};

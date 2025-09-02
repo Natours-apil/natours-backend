@@ -33,7 +33,6 @@ exports.getOne = (Model, popOptions) =>
     if (popOptions) query.populate(popOptions);
 
     const doc = await query;
-    // Tour.findOne({ _id: req.params.id });
 
     if (!doc) {
       return next(new AppError('No document found with that ID', 404));
