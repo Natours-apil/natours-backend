@@ -8,10 +8,11 @@ const Router = express.Router({
 
 // get,post /tour/:id/reviews/:reviewId
 
+Router.use(authController.protect);
+
 Router.route('/')
   .get(reviewController.getAllReviews)
   .post(
-    authController.protect,
     authController.restrictTo('user', 'admin'),
     reviewController.setTourUserIds,
     reviewController.createReview
@@ -19,7 +20,13 @@ Router.route('/')
 
 Router.route('/:id')
   .get(reviewController.getReview)
-  .patch(reviewController.updateReview)
-  .delete(reviewController.deleteReview);
+  .patch(
+    authController.restrictTo('user', 'admin'),
+    reviewController.updateReview
+  )
+  .delete(
+    authController.restrictTo('user', 'admin'),
+    reviewController.deleteReview
+  );
 
 module.exports = Router;
