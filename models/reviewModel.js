@@ -67,9 +67,18 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   });
 };
 
+//this is for new review created
 reviewSchema.post('save', function () {
   // this points to current review
   this.constructor.calcAverageRatings(this.tour);
+});
+
+// this is for update and delete review
+reviewSchema.post(/^findOneAnd/, async function (doc) {
+  // doc is the document returned from findOneAndUpdate/Delete
+  if (doc) {
+    await doc.constructor.calcAverageRatings(doc.tour);
+  }
 });
 
 const review = mongoose.model('Review', reviewSchema);
