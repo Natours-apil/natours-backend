@@ -26,7 +26,6 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
     {
       $match: {
         ratingsAverage: { $gte: 4.5 },
-
         //NOT PREFERRED BECOZ WE HAVE TO DO IT ON ALL AGGREGATE FUNCTION
         // secretTour: { $ne: true }
       },

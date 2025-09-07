@@ -37,6 +37,8 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
@@ -81,5 +83,5 @@ reviewSchema.post(/^findOneAnd/, async function (doc) {
   }
 });
 
-const review = mongoose.model('Review', reviewSchema);
-module.exports = review;
+const Review = mongoose.model('Review', reviewSchema);
+module.exports = Review;
